@@ -201,9 +201,16 @@ for iT=1:num_tongue
     
     % Get beam center location
     % --- max beam energy location
-    [~,mmidx] = max(vq_in(:));
+    xx = vq_in(:);
+    [~,mmidx] = max(xx);
     azq_max_loc = azq(mmidx);
-    elq_max_loc = elq(mmidx);    
+    elq_max_loc = elq(mmidx);
+    xx(isnan(xx)) = -inf;
+    [~,sort_idx] = sort(xx,'descend');
+    ii = xx(sort_idx)>-1;
+    azq_top_loc = mean(azq(sort_idx(ii)));
+    elq_top_loc = mean(elq(sort_idx(ii)));
+
     % --- center of best-fitting ellipse
     [raw,rot_max,rot_elpctr,rot_elpctr_tilt] = ...
         shift_rotate_bp_composite(bem_results.phi,bem_results.theta,pp,map_proj,0.005);
@@ -225,6 +232,7 @@ for iT=1:num_tongue
     % flip left/right because convention for azimuth is flipped in map projection
     plotm(el_ectr_r,-az_ectr_r,'ro','markersize',8,'linewidth',2);
     plotm(elq_max_loc,-azq_max_loc,'rx','markersize',8,'linewidth',2);
+    plotm(elq_top_loc,-azq_top_loc,'r^','markersize',8,'linewidth',2);
     
     % Plot -3dB contour at current freq
     figure(fig_cntr)
@@ -239,7 +247,10 @@ for iT=1:num_tongue
     hold on
     % flip left/right because convention for azimuth is flipped in map projection
     plotm(el_ectr_r,-az_ectr_r,'.','color',colorset(iT,:),'markersize',30,'linewidth',2);
-    plotm(elq_max_loc,-azq_max_loc,'x','color',colorset_ctr(iT,:),'markersize',8,'linewidth',2);
+    plotm(elq_max_loc,-azq_max_loc,'x','color',colorset_ctr(iT,:), ...
+          'markersize',8,'linewidth',2);
+    plotm(elq_top_loc,-azq_top_loc,'^','color',colorset_ctr(iT,:), ...
+          'markersize',8,'linewidth',2);
     
 end
 
