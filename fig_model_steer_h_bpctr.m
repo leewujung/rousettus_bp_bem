@@ -44,8 +44,8 @@ if ~exist(save_path,'dir')
 end
 
 % Src locations path/file
-src_incl_str = '2345';
-src_incl = [2,3,4,5];
+src_incl_str = '3456';
+src_incl = [3,4,5,6];
 src_loc_path = sprintf('pick_src_loc_%s_%s',bem_calc_date,model_shape);
 src_loc_file = sprintf('%s_src_loc_newleft34.mat',model_shape);
 SRC = load(fullfile(base_path,src_loc_path,src_loc_file));
@@ -210,7 +210,6 @@ for iT=1:num_tongue
     ii = xx(sort_idx)>-1;
     azq_top_loc = mean(azq(sort_idx(ii)));
     elq_top_loc = mean(elq(sort_idx(ii)));
-
     % --- center of best-fitting ellipse
     [raw,rot_max,rot_elpctr,rot_elpctr_tilt] = ...
         shift_rotate_bp_composite(bem_results.phi,bem_results.theta,pp,map_proj,0.005);
@@ -218,6 +217,10 @@ for iT=1:num_tongue
     [el_ectr_r,az_ectr_r] = rotatem(el_ectr,az_ectr,...
                                     [elq_max_loc,azq_max_loc],...
                                     'inverse','degrees');
+    % --- save the locs for plotting at the end
+    max_loc_all(iT,:) = [elq_max_loc,azq_max_loc];
+    top_loc_all(iT,:) = [elq_top_loc,azq_top_loc];
+    ectr_all(iT,:) = [el_ectr_r,az_ectr_r];
     
     % Plot summary figure
     figure(fig_bp)
@@ -244,13 +247,13 @@ for iT=1:num_tongue
         '.','linewidth',2,'markersize',20,'color',colorset(iT,:));
     subplot(133)  % -3dB contour
     plot(-c3db_x,c3db_y,'linewidth',2,'color',colorset(iT,:));
-    hold on
+    %hold on
     % flip left/right because convention for azimuth is flipped in map projection
-    plotm(el_ectr_r,-az_ectr_r,'.','color',colorset(iT,:),'markersize',30,'linewidth',2);
-    plotm(elq_max_loc,-azq_max_loc,'x','color',colorset_ctr(iT,:), ...
-          'markersize',8,'linewidth',2);
-    plotm(elq_top_loc,-azq_top_loc,'^','color',colorset_ctr(iT,:), ...
-          'markersize',8,'linewidth',2);
+    %plotm(el_ectr_r,-az_ectr_r,'.','color',colorset(iT,:),'markersize',30,'linewidth',2);
+    %plotm(elq_max_loc,-azq_max_loc,'x','color',colorset_ctr(iT,:), ...
+    %      'markersize',8,'linewidth',2);
+    %plotm(elq_top_loc,-azq_top_loc,'^','color',colorset_ctr(iT,:), ...
+    %      'markersize',8,'linewidth',2);
     
 end
 
@@ -258,6 +261,18 @@ end
 figure(fig_cntr)
 subplot(133)
 axesm(map_proj);
+hold on
+% flip left/right because convention for azimuth is flipped in map projection
+for iT=1:num_tongue
+    % flip left/right because convention for azimuth is flipped in map projection
+    plotm(ectr_all(iT,1),-ectr_all(iT,2),'.','color',colorset(iT,:),'markersize',30,'linewidth',2);
+end
+for iT=1:num_tongue
+    plotm(max_loc_all(iT,1),-max_loc_all(iT,2),'x','color',colorset_ctr(iT,:), ...
+          'markersize',8,'linewidth',2);
+    plotm(top_loc_all(iT,1),-top_loc_all(iT,2),'^','color',colorset_ctr(iT,:), ...
+          'markersize',8,'linewidth',2);
+end
 axis off
 gridm('gcolor',200*ones(1,3)/255,'glinestyle','-');
 framem('fedgecolor',200*ones(1,3)/255,'flonlimit',[-1 1]*az_plot_limit,...
