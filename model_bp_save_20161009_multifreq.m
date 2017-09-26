@@ -45,7 +45,7 @@ SRC = load(fullfile(base_path,src_loc_path,src_loc_file));
 nn_all = SRC.idx_left([4,5,6,2]);  % the back 4 sources
 
 % Other params
-freq_all = (25:10:55)*1e3;
+freq_all = (20:5:60)*1e3;
 %freq = 35*1e3;
 cvec = 0:-3:-30;
 map_proj = 'eckert4';   % use eckert4 because orthographic has very limited azimuth span
@@ -68,7 +68,6 @@ num_tongue = size(tongue_loc_all,1);
 for iF=1:num_freq
     freq = freq_all(iF);
     S.freq = freq;
-
 
     % Load one sample to get info
     indiv_src_file = sprintf('%s_nn%04d_freq%02dkHz.mat',...
