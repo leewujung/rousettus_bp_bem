@@ -31,7 +31,7 @@ ss = strsplit(indiv_src_path,'_');
 model_shape = ss{end};
 bem_calc_date = ss{end-1};
 pfield_size = [73,37];
-lr_opt = 'right';
+lr_opt = 'left';
 
 % Save path
 [~,script_name,~] = fileparts(mfilename('fullpath'));
@@ -41,13 +41,17 @@ if ~exist(save_path,'dir')
 end
 
 % Src locations path/file
-src_incl_str = '3456';
-src_incl = [3,4,5,6];
+src_incl_str = '2345';
+src_incl = [2,3,4,5];
+%src_incl_str = '3456';
+%src_incl = [3,4,5,6];
+%src_incl_str = 'many';
+%src_incl = [];  % including all sources
 % src_incl2 = [1,3,4,6];
 src_loc_path = sprintf('pick_src_loc_%s_%s',bem_calc_date,model_shape);
-src_loc_file = sprintf('%s_src_loc_newleft34.mat',model_shape);
-% src_loc_file = sprintf('%s_src_loc.mat',model_shape);
-% src_loc_file = sprintf('%s_src_loc_many.mat',model_shape);
+src_loc_file = sprintf('%s_src_loc_newleft34.mat',model_shape);  % for Ra-colony-rotear-0.5mm
+% src_loc_file = sprintf('%s_src_loc.mat',model_shape);  % for Ra-colony-noear-0.5mm
+% src_loc_file = sprintf('%s_src_loc_many.mat',model_shape);  % for many srcs in Ra-colony-rotear-0.5mm
 SRC = load(fullfile(model_base_path,src_loc_path,src_loc_file));
 if strcmp(lr_opt,'left')
     nn_all = SRC.idx_left;
